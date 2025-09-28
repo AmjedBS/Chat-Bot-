@@ -3,10 +3,36 @@
   <head>
     <title>Chatbot</title>
     <style>
+      :root {
+        /* Dark theme colors - keeping these the same */
+        --bg-primary-dark: #0E1621;
+        --bg-secondary-dark: #17212B;
+        --text-dark: #FFFFFF;
+        --input-bg-dark: #253341;
+        --message-user-dark: #2B5278;
+        --message-bot-dark: #182533;
+        --border-dark: #253341;
+        --placeholder-dark: #8596A7;
+        
+        /* Light theme colors - updated to green Telegram theme */
+        --bg-primary-light: #E6F5E3;  /* Light green background */
+        --bg-secondary-light: #FFFFFF;
+        --text-light: #303030;
+        --input-bg-light: #F0F7EE;    /* Very light green for input */
+        --message-user-light: #4CAF50; /* Telegram green */
+        --message-bot-light: #E6F5E3;  /* Light green for bot messages */
+        --border-light: #DBEFDA;       /* Light green border */
+        --placeholder-light: #88AF8C;  /* Muted green for placeholder */
+      }
+
       body {
         font-family: Arial;
         margin: 0;
-        background-color: #0E1621;
+        background-color: var(--bg-primary-dark);
+      }
+
+      body.light-theme {
+        background-color: var(--bg-primary-light);
       }
 
       .app-container {
@@ -15,7 +41,11 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
-        background-color: #17212B;
+        background-color: var(--bg-secondary-dark);
+      }
+
+      body.light-theme .app-container {
+        background-color: var(--bg-secondary-light);
       }
 
       .chat-messages-container {
@@ -46,13 +76,23 @@
       }
 
       .chat-message-user .chat-message-text {
-        background-color: #2B5278;
-        color: white;
+        background-color: var(--message-user-dark);
+        color: var(--text-dark);
+      }
+
+      body.light-theme .chat-message-user .chat-message-text {
+        background-color: var(--message-user-light);
+        color: var(--text-dark);
       }
 
       .chat-message-robot .chat-message-text {
-        background-color: #182533;
-        color: #fff;
+        background-color: var(--message-bot-dark);
+        color: var(--text-dark);
+      }
+
+      body.light-theme .chat-message-robot .chat-message-text {
+        background-color: var(--message-bot-light);
+        color: var(--text-light);
       }
 
       .chat-message-profile {
@@ -76,10 +116,15 @@
         padding: 12px 15px;
         border-radius: 20px;
         border: none;
-        background-color: #253341;
-        color: white;
+        background-color: var(--input-bg-dark);
+        color: var(--text-dark);
         font-size: 15px;
         margin-right: 10px;
+      }
+
+      body.light-theme .chat-input {
+        background-color: var(--input-bg-light);
+        color: var(--text-light);
       }
 
       .chat-input:focus {
@@ -107,6 +152,19 @@
         transition: background-color 0.2s;
       }
 
+      body.light-theme .send-button {
+        background-color: #4CAF50;  /* Telegram green */
+      }
+
+      body.light-theme .send-button:hover {
+        background-color: #45a049;  /* Darker green on hover */
+      }
+
+      body.light-theme .send-button:disabled {
+        background-color: #E6F5E3;
+        color: #88AF8C;
+      }
+
       .send-button:hover {
         background-color: #356499;
       }
@@ -129,6 +187,23 @@
       .chat-messages-container::-webkit-scrollbar-thumb {
         background: #253341;
         border-radius: 3px;
+      }
+
+      /* Theme toggle button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        color: var(--text-dark);
+        cursor: pointer;
+        font-size: 24px;
+        z-index: 1000;
+      }
+
+      body.light-theme .theme-toggle {
+        color: var(--text-light);
       }
     </style>
   </head>
@@ -285,12 +360,28 @@
 
       function App() {
         const [chatMessages, setChatMessages] = React.useState([]);
-        // const [chatMessages, setChatMessages] = array;
-        // const chatMessages = array[0];
-        // const setChatMessages = array[1];
+        const [isDarkTheme, setIsDarkTheme] = React.useState(true);
+
+        React.useEffect(() => {
+          if (isDarkTheme) {
+            document.body.classList.remove('light-theme');
+          } else {
+            document.body.classList.add('light-theme');
+          }
+        }, [isDarkTheme]);
+
+        function toggleTheme() {
+          setIsDarkTheme(!isDarkTheme);
+        }
 
         return (
           <div className="app-container">
+            <button 
+              className="theme-toggle" 
+              onClick={toggleTheme}
+            >
+              {isDarkTheme ? '☀️' : '🌙'}
+            </button>
             <ChatMessages
               chatMessages={chatMessages}
             />
